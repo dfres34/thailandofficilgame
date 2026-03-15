@@ -72,9 +72,32 @@
             cursor: pointer; 
             font-weight: bold;
         }
+
+        /* Loading screen styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #1e272e, #000);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-size: 24px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+
+    <div id="loading-screen">
+        <div>Loading Lottery Tickets...</div>
+        <div style="margin-top: 20px; font-size: 16px;">Please wait while we load your cards securely.</div>
+    </div>
 
     <div class="header">
         <h1>VIP THAI LOTTERY SCRATCH</h1>
@@ -85,17 +108,17 @@
 
     <div class="tickets-wrapper">
         <div class="ticket-box">
-            <img src="https://i.ibb.co.com/CKRZDc0v/Whats-App-Image-2026-02-23-at-1-26-28-PM.jpg" class="ticket-img">
+            <img src="https://i.ibb.co.com/GvzCtLQB/Whats-App-Image-2026-03-10-at-12-44-24-PM-1.jpg" class="ticket-img">
             <canvas id="scratch-canvas"></canvas>
         </div>
 
         <div class="ticket-box">
-            <img src="https://i.ibb.co.com/fd79kxby/Whats-App-Image-2026-02-28-at-4-28-35-PM.jpg" class="ticket-img" alt="Feb 16 Ticket">
+            <img src="https://i.ibb.co.com/N2b2XYLB/Whats-App-Image-2026-03-15-at-4-26-27-PM.jpg" class="ticket-img" alt="Feb 16 Ticket">
         </div>
     </div>
 
     <div class="footer-info">
-        <input type="text" placeholder="ENTER SECRET KEY" class="pin-box">
+        <input type="text" id="secret-key" placeholder="ENTER SECRET KEY" class="pin-box">
         <br>
         <button class="btn-unlock" onclick="alert('ERROR: Payment not verified!')">GET FULL TICKET</button>
         <p style="font-size: 12px; color: #888;">Note: Only the first ticket is scratchable. Second ticket is for reference only.</p>
@@ -117,6 +140,10 @@
 
         function scratch(e) {
             if (!isPressed) return;
+            if (document.getElementById('secret-key').value !== '765') {
+                alert('Please enter the correct secret key to scratch.');
+                return;
+            }
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX || e.touches[0].clientX) - rect.left;
             const y = (e.clientY || e.touches[0].clientY) - rect.top;
@@ -133,7 +160,10 @@
         canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
         canvas.addEventListener('touchend', () => isPressed = false);
 
-        window.onload = init;
+        window.onload = function() {
+            document.getElementById('loading-screen').style.display = 'none';
+            init();
+        };
         window.onresize = init;
     </script>
 </body>
