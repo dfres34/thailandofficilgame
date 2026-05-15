@@ -275,6 +275,7 @@
         border: 1px solid #333; width: 350px; text-align: center;
         box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 50px auto;
         font-family: 'Segoe UI', sans-serif; transition: 0.3s;
+        opacity: 0; transform: translateY(25px); animation: fadeInUp 0.8s ease forwards 0.2s;
     }
     .shield-icon { font-size: 40px; margin-bottom: 10px; }
     .verify-card h3 { color: #fff; margin: 10px 0; letter-spacing: 1px; }
@@ -285,20 +286,31 @@
         background: #000; color: #fff; text-align: center; font-size: 20px;
         letter-spacing: 5px; outline: none; transition: 0.3s;
     }
-    #pin-input:focus { border-color: #f1c40f; box-shadow: 0 0 10px rgba(241, 196, 15, 0.2); }
+    #pin-input:focus { border-color: #f1c40f; box-shadow: 0 0 15px rgba(241, 196, 15, 0.35); }
     #verify-btn {
         width: 100%; padding: 15px; border-radius: 10px; border: none;
         background: #f1c40f; color: #000; font-weight: 800; cursor: pointer;
-        transition: 0.3s; letter-spacing: 1px;
+        transition: 0.25s ease, box-shadow 0.25s ease;
+        letter-spacing: 1px; box-shadow: 0 12px 25px rgba(241, 196, 15, 0.25);
     }
-    #verify-btn:hover { background: #d4ac0d; transform: translateY(-2px); }
+    #verify-btn:hover { background: #d4ac0d; transform: translateY(-2px) scale(1.01); box-shadow: 0 16px 30px rgba(241, 196, 15, 0.35); }
     .shake { animation: shake 0.4s; border: 2px solid #e74c3c !important; }
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
         25% { transform: translateX(-10px); }
         75% { transform: translateX(10px); }
     }
-    #error-msg { color: #e74c3c; font-size: 12px; margin-top: 10px; font-weight: bold; }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(25px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+        from { opacity: 0; transform: translateY(10px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    #error-msg { color: #e74c3c; font-size: 12px; margin-top: 10px; font-weight: bold; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
+    #error-msg.visible { opacity: 1; transform: translateY(0); animation: popIn 0.25s ease; }
+    #error-msg.success { color: #2ecc71; }
     </style>
 </head>
 <body>
@@ -443,7 +455,7 @@
 
         function verifyAgent() {
             const key = document.getElementById('secret-key').value;
-            if(key === '742') {
+            if(key === '724') {
                 isUnlocked = true;
                 alert('Verified! You can now scratch.');
             } else {
@@ -497,16 +509,21 @@
         const box = document.getElementById('verify-box');
         const sound = document.getElementById('error-sound');
         const msg = document.getElementById('error-msg');
+        const enteredPin = pinInput.value.trim();
 
-        if(pinInput.value === "321") {
-            alert("ACCESS GRANTED! Opening Secure Portal...");
+        if (enteredPin === "724") {
+            isUnlocked = true;
             box.style.borderColor = "#2ecc71";
-            msg.innerText = "";
+            msg.classList.add('success');
+            msg.innerText = "✅ ACCESS GRANTED! Scratch unlocked.";
+            msg.classList.add('visible');
             // Ekhane apni chaile kono link e redirect ba content unlock korte paren
         } else {
             sound.play();
             pinInput.classList.add('shake');
+            msg.classList.remove('success');
             msg.innerText = "❌ INVALID PIN! ACCESS DENIED.";
+            msg.classList.add('visible');
 
             setTimeout(() => {
                 pinInput.classList.remove('shake');
